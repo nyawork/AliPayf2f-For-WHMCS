@@ -9,9 +9,9 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 class alipayfull_link {
     
     public function get_paylink($params){
-        $type = Capsule::table("tblpaymentgateways")->where("gateway","alipay_full")->where("setting","apitype")->first();
-        $skintype = Capsule::table("tblpaymentgateways")->where("gateway","alipay_full")->where("setting","skintype")->first();
-        switch ($type->value) {
+        $type = $params["apitype"];
+        $skintype = $params["skintype"];
+        switch ($type) {
             case "1":
                 return $this->normal_mapi($params);
             case "2";
@@ -53,9 +53,6 @@ class alipayfull_link {
         } 
         if (empty($params['rsa_key'])){
             return "管理员未配置 RSA私钥  , 无法使用该支付接口";
-        }
-        if (empty($params['alipay_key'])){
-            return "管理员未配置 支付宝公钥  , 无法使用该支付接口";
         }
         $qrPayRequestBuilder = new AlipayTradePrecreateContentBuilder();
         $qrPayRequestBuilder->setOutTradeNo("weloveidc".md5(uniqid())."-".$params['invoiceid']);
